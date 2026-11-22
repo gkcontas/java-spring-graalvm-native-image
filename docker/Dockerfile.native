@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1
+# Native executable compiled inside the GraalVM image, so the host needs only
+# Docker. The Gradle cache is a BuildKit cache mount: dependencies are not
+# downloaded again on every build and never end up in an image layer.
+FROM ghcr.io/graalvm/native-image-community:21 AS build
+# gradlew needs xargs, which the slim Oracle Linux base does not ship.
+RUN microdnf install -y findutils && microdnf clean all
+WORKDIR /src
+COPY gradlew settings.gradle.kts build.gradle.kts ./
+COPY gradle gradle
+RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon -q dependencies > /dev/null
+COPY src src
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew --no-daemon nativeCompile -x test \
+    && cp build/native/nativeCompile/native-image-catalog /native-image-catalog
+
+# Only the executable, to run it on the host:
+#   docker build -f docker/Dockerfile.native --target binary --output build/native .
+FROM scratch AS binary
+COPY --from=build /native-image-catalog /
+
+# The binary links glibc dynamically: distroless "base" has it, "static" does not.
+FROM gcr.io/distroless/base-debian12
+COPY --from=build /native-image-catalog /app/native-image-catalog
+EXPOSE 8080
+ENTRYPOINT ["/app/native-image-catalog"]

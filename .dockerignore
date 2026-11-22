@@ -1,0 +1,5 @@
+.gradle
+build
+!build/libs/native-image-catalog-1.0.0.jar
+.git
+*.md
