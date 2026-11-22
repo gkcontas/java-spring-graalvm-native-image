@@ -9,3 +9,10 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+
+
+app:
+  # Class.forName on this value: every strategy that may be named here needs a
+  # reflection hint (PricingHints), or the native binary fails at startup.
+  pricing:
+    rounding: com.gkcontas.nativeimage.pricing.HalfEvenRounding
