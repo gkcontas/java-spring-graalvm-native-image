@@ -1,0 +1,1 @@
+unregistered resource: present in the jar, absent from the native image

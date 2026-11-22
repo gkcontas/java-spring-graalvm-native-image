@@ -25,3 +25,8 @@ app:
   # property, not the bean.
   audit:
     enabled: false
+  # Plain @Value: still read at runtime, even on a native image.
+  greeting: hello
+  diagnostics:
+    registered-class: com.gkcontas.nativeimage.diagnostics.RegisteredPlugin
+    unregistered-class: com.gkcontas.nativeimage.diagnostics.UnregisteredPlugin
