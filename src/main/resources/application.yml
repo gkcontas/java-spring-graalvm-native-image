@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: native-image-catalog
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog
+    username: catalog
+    password: catalog
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
