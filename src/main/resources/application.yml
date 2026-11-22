@@ -10,9 +10,18 @@ spring:
     hibernate:
       ddl-auto: validate
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 
 app:
   # Class.forName on this value: every strategy that may be named here needs a
   # reflection hint (PricingHints), or the native binary fails at startup.
   pricing:
     rounding: com.gkcontas.nativeimage.pricing.HalfEvenRounding
+  # Frozen at build time on AOT/native: flipping it at runtime changes the
+  # property, not the bean.
+  audit:
+    enabled: false
